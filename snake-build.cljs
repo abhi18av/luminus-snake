@@ -1,7 +1,5 @@
 (require 'lumo.build.api)
 
-;(lumo.build.api/build "hello-world.cljs" {:output-to "out/output.js"})
-
 
 (lumo.build.api/build "snake.cljs" {
                 ;:target :browser
