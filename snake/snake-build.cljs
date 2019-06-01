@@ -3,7 +3,7 @@
 ;(lumo.build.api/build "hello-world.cljs" {:output-to "out/output.js"})
 
 
-(lumo.build.api/build "hello-lumo.cljs" {
+(lumo.build.api/build "snake.cljs" {
                 ;:target :browser
                 :optimizations :simple
                 :output-to "./out/output.js"

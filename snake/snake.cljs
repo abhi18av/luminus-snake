@@ -1,5 +1,4 @@
-(ns snake.main 
-  (:require 'http))
+(require '[http :as http])
 
 
 ;(println "Hello, Lumo!")
