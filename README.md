@@ -6,7 +6,7 @@ Tools I've used
 
 - iTerm
 - Fish shell
-- git-flow
+- git-flow-avh
 - neovim
 - lumo-cljs
 - firefox-developer-edition
