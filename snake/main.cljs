@@ -1,5 +1,14 @@
 (ns snake.main 
-  (:require ["os" :as os]))
+  (:require 'http))
 
 
-(println "Hello, Lumo!")
+;(println "Hello, Lumo!")
+
+(def snake-server 
+  (http/createServer
+   (fn [req res]
+    (.write res "Hello, Lumo!")
+     (.end res))))
+
+(.listen snake-server 8080)
+
