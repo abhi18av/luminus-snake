@@ -1,6 +1,3 @@
-;(require '[os :as os])
-;(println (.cpus os))
-
 
 (require '[http :as http])
 
