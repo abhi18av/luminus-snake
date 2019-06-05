@@ -79,8 +79,7 @@
 
  (t/is 
   (= "green"
-    ))
-    (.-fillStyle (:canvas/ctx @state)))
+    (.-fillStyle (:canvas/ctx @state)))))
 
 
 
@@ -233,5 +232,7 @@
 ;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;
 
-;; NOTE run all tests on terminal
+;; NOTE run all tests on browser
+
+
 (t/run-tests)
