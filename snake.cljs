@@ -1,21 +1,22 @@
 (ns snake.core
-
-;;;;;;;;;;;;;;;;;;;
-;; snake
-;;;;;;;;;;;;;;;;;;;
-
   (:require [goog.dom :as dom]
             [goog.events :as events]
             [goog.events.KeyCodes]
-            [goog.events.EventType]))
+            [goog.events.EventType]
+            [clojure.test :as t]))
+
+
+
 
 ;; ------------------------------
 ;; States
-
+;; TODO remove the <nil> from the :canvas/element :canvas/ctx before production
 (def state
   (atom {;; canvas object
          :canvas/element  (dom/getElement "canvas")
-         :canvas/ctx  (-> (dom/getElement "canvas") (.getContext "2d"))
+
+         :canvas/ctx      (-> (dom/getElement "canvas") (.getContext "2d"))
+
          :canvas/background-color "white" ; default canvas color (background)
          :canvas/width  640
          :canvas/height 480
@@ -31,14 +32,27 @@
          :snake/alive true                ; when `false`, stop game loop
          }))
 
+
+
 ;; ------------------------------
 ;; Helper functions
+
 
 (defn axis-add [[x1 y1] [x2 y2]]
   [(+ x1 x2) (+ y1 y2)])
 
+(t/deftest axis-add-test 
+  (t/is
+    (= [4 6] (axis-add [1 2] [3 4]) )))
+
+
 (defn axis-equal? [[x1 y1] [x2 y2]]
   (and (= x1 x2) (= y1 y2)))
+
+(t/deftest axis-equal?-test 
+  (t/is
+    (= false (axis-equal? [1 2] [3 4]) )))
+
 
 ;; -----------------------------
 ;; Canvas functions
@@ -46,7 +60,7 @@
 (defn draw
   "Draw the point on canvas according to snake's width/height."
   [[x y] color]
-  (let [{:keys [:canvas/ctx :snake/width :snake/height :snake/border]} @state]
+  (let [{:keys [:canvas/ctx :snake/width :snake/height :snake/border]} (deref state )]
     (set! (.-fillStyle ctx) color)
     (.fillRect  ctx
                 (* x width)
@@ -54,12 +68,37 @@
                 (- width border)
                 (- height border))))
 
+
+;; call in browser console 
+;; snake.core.draw([2,1], "green")
+(t/deftest draw-test
+
+; (t/is 
+;  (= [32 24 30 22]
+;   (draw [1 1] "green")))
+
+ (t/is 
+  (= "green"
+    ))
+    (.-fillStyle (:canvas/ctx @state)))
+
+
+
+
 (defn resize-canvas
   "Resize the canvas according to state."
   []
   (let [{:keys [:canvas/element :canvas/width :canvas/height]} @state]
     (.setAttribute element "width"  width)
     (.setAttribute element "height" height)))
+
+;; call in browser console 
+;; snake.core.resize_canvas()
+(t/deftest resize-canvas-test
+ (t/is 
+  (= 640 (.-width (dom/getElement "canvas")))))
+
+
 
 ;; ------------------------------
 ;; Game's functions
@@ -72,6 +111,11 @@
         goog.events.KeyCodes.LEFT  [-1  0]  ; code: 37
         goog.events.KeyCodes.RIGHT [1  0]} ; code: 39
        keycode nil))
+
+(t/deftest keycode->direction-test
+  (t/is 
+    (= [1 0] (keycode->direction 39))))
+
 
 (defn opposite-direction?
   "Detect two direction array are opposite direction or not."
@@ -148,7 +192,7 @@
     ;; When snake is alive, draw the snake and switch next game-loop
     (when (:snake/alive @state)
       ;; Draw head
-      (draw head body-color)
+      (draw  head body-color)
       ;; Detect if food eat by snake or not
       (if (eat-food? head)
         ;; When food was eaten by snake, just increase it's head and not remove tail
@@ -157,7 +201,7 @@
                :snake/body (conj body head))
         (do
           ;; Remove tail by draw canvas's background-color
-          (draw tail background-color)
+          (draw  tail background-color)
           ;; Add head and remove tail
           (swap! state assoc-in [:snake/body] (-> (conj body head) drop-last))))
 
@@ -184,3 +228,10 @@
  (events/listen js/document goog.events.EventType.KEYDOWN on-keydown)
   ;; Start the game loop
  (game-loop))
+
+;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+
+;; NOTE run all tests on terminal
+(t/run-tests)

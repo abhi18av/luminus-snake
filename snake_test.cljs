@@ -1,2 +1,4 @@
-(ns snake.core-test
-  (:require [clojure.test :as t]))
+(ns snake-test
+  (:require 
+    [snake :refer axis-add]
+    [clojure.test :refer :all]))
