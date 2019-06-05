@@ -7,8 +7,7 @@
   (:require [goog.dom :as dom]
             [goog.events :as events]
             [goog.events.KeyCodes]
-            [goog.events.EventType]
-            [clojure.pprint :refer [pprint]]))
+            [goog.events.EventType]))
 
 ;; ------------------------------
 ;; States
@@ -41,14 +40,7 @@
 (defn axis-equal? [[x1 y1] [x2 y2]]
   (and (= x1 x2) (= y1 y2)))
 
-(defn print-state
-  "Print current game state on console.(For debugging purpose)"
-  []
-  (.log js/console "-------------------------------")
-  (.log js/console (with-out-str (pprint @state)))
-  (.log js/console "-------------------------------\n"))
-
-;; ------------------------------
+;; -----------------------------
 ;; Canvas functions
 
 (defn draw
@@ -111,13 +103,13 @@
     (some #(axis-equal? [x y] %) body)))
 
 (defn eat-food?
-  "Check if asix if equal the food's axis."
+  "Check if axis is equal the food's axis."
   [[x y]]
   (let [{:keys [:snake/food]} @state]
     (axis-equal? [x y] food)))
 
 (defn generate-food
-  "Generate the food on random coordinate."
+  "Generate the food on a random coordinate."
   []
   (let [{:keys [:snake/body :snake/food :snake/food-color]} @state
         max-x (/ (:canvas/width @state)  (:snake/width @state))
@@ -143,12 +135,12 @@
     ;; Every time enter game-loop, check if we need to generate new food or not
     (generate-food)
 
-    ;; Detect if snake
+    ;; Detect if snake collided with it's own body
     (when (self-collission? head)
       (js/alert (str "Snake is collission with itself at : " head))
       (swap! state assoc-in [:snake/alive] false))
 
-    ;; Detect if snake excessed the boundary
+    ;; Detect if snake exceeded the boundary
     (when (out-of-boundary? head)
       (js/alert (str "Snake is out of boundary at :" head))
       (swap! state assoc-in [:snake/alive] false))
@@ -177,20 +169,18 @@
 ;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;
 
-;; start is called by init and after code reloading finishes
+;; start is called by init after code reloading finishes
 
 (defn init []
   ;; init is called ONCE when the page loads
   ;; this is called in the index.html and must be exported
   ;; so it is available even in :advanced release builds
-(js/console.log "init")
-
+ (js/console.log "init")
  ;; Resize canvas object
-(resize-canvas)
+ (resize-canvas)
   ;; Remove all listen events
-(events/removeAll js/document)
+ (events/removeAll js/document)
   ;; Register event listener `on-keydown` event
-(events/listen js/document goog.events.EventType.KEYDOWN on-keydown)
+ (events/listen js/document goog.events.EventType.KEYDOWN on-keydown)
   ;; Start the game loop
-(game-loop))
-
+ (game-loop))
