@@ -1,4 +1,4 @@
-(ns snake
+(ns snake.core
 
 ;;;;;;;;;;;;;;;;;;;
 ;; snake
@@ -47,7 +47,7 @@
   "Draw the point on canvas according to snake's width/height."
   [[x y] color]
   (let [{:keys [:canvas/ctx :snake/width :snake/height :snake/border]} @state]
-    (aset ctx "fillStyle" color) ;; (set! (.-fillStyle ctx) color)
+    (set! (.-fillStyle ctx) color)
     (.fillRect  ctx
                 (* x width)
                 (* y height)
