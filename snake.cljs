@@ -9,8 +9,7 @@
 
 
 ;; ------------------------------
-;; States
-;; TODO remove the <nil> from the :canvas/element :canvas/ctx before production
+;; The global mutable State
 (def state
   (atom {;; canvas object
          :canvas/element  (dom/getElement "canvas")
