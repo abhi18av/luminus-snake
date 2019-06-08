@@ -236,13 +236,9 @@
 
 (defn app
   []
-  [:div
-        [
-         :canvas/element  (dom/getElement "canvas")
-         :canvas/ctx      (-> (dom/getElement "canvas") (.getContext "2d"))
-         :canvas/background-color "white" ; default canvas color (background)
-         :canvas/width  640
-         :canvas/height 480 ]])
+  (let [{:keys [:snake/speed]}  @state]
+   [:div
+    [:div "Game Speed: " speed]]))
 
 (defn ^:export main
   []
@@ -258,4 +254,4 @@
 ;; NOTE run all tests on browser
 
 
-;(t/run-tests)
+(t/run-tests)
