@@ -1,0 +1,20 @@
+{
+  "name": "luminus-snake",
+  "version": "2.0.0",
+  "description": "Luminus snake built with ClojureScript and Reagent",
+  "repository": "https://github.com/abhi18av/luminus-snake",
+  "private": true,
+  "scripts": {
+    "dev": "shadow-cljs watch app",
+    "release": "shadow-cljs release app",
+    "clean": "rm -rf target && rm -rf public/js"
+  },
+  "devDependencies": {
+    "shadow-cljs": "2.3.30"
+  },
+  "dependencies": {
+    "create-react-class": "15.6.3",
+    "react": "16.3.2",
+    "react-dom": "16.3.2"
+  }
+}
