@@ -16,3 +16,26 @@ canvas {
     margin-right: auto;
     display: block;
 }
+
+.container {
+    width: auto;
+    height: auto;
+    background: auto ;
+    margin: auto;
+    padding: 2px;
+    font-size: 150%;
+}
+.one {
+    width: 15%;
+    height: 20px;
+    background: auto;
+    float: left;
+    color: olive;
+
+}
+.two {
+    margin-left: 15%;
+    height: 20px;
+    background: auto;
+    color: green;
+}

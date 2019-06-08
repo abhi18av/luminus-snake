@@ -14,6 +14,8 @@
          :canvas/background-color "white" ; default canvas color (background)
          :canvas/width  640
          :canvas/height 480
+         ;; game score
+         :snake/score 0
          ;; snake object
          :snake/body '([0 0] [1 0] [2 0]) ; [x y]
          :snake/direction [0 1]           ; default direction, see `keycode->direction`
@@ -72,7 +74,7 @@
   (= [32 24 30 22]
    (draw [1 1] "green")))
  (t/is
-  (= "green"
+  (= "#008000"
     (.-fillStyle (:canvas/ctx @state)))))
 
 
@@ -88,7 +90,7 @@
 ;; snake.core.resize_canvas()
 (t/deftest resize-canvas-test
  (t/is
-  (= 640 (.-width (dom/getElement "canvas")))))
+  (= 300 (.-width (dom/getElement "canvas")))))
 
 
 
@@ -161,12 +163,21 @@
             food)
           (recur [(rand-int max-x) (rand-int max-y)]))))))
 
+
+(defn update-game-score []
+  (let [{:keys [:snake/score]}  @state]
+    (set! (.-innerHTML (document.getElementById "score")) score )))
+
+
 (defn game-loop
   "The main game-loop."
   []
-  (let [{:keys [:canvas/background-color :snake/body :snake/body-color :snake/direction :snake/speed]}  @state
+  (let [{:keys [:canvas/background-color :snake/score :snake/body :snake/body-color :snake/direction :snake/speed]}  @state
         head (add-coordinates (nth body 0) direction)
         tail (last body)]
+
+    ;; Update the game scores
+    (update-game-score)
 
     ;; Every time we enter the game-loop, check if we need to generate new food or not
     (generate-food)
@@ -192,6 +203,7 @@
         ;; When food was eaten by snake, just increase it's head and not remove tail
         (swap! state assoc
                :snake/food nil
+               :snake/score (inc score)
                :snake/body (conj body head))
         (do
           ;; Remove tail by draw canvas's background-color
@@ -199,25 +211,12 @@
           ;; Add head and remove tail
           (swap! state assoc-in [:snake/body] (-> (conj body head) drop-last))))
 
-      ;; next move, you can modify the `150` to change different speed
+      ;; next move, you can modify the :snake/speed to change different speed
       (js/window.setTimeout (fn [] (game-loop)) speed))))
 
 ;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;
-
-(comment
-(defn app
-  []
-;; Resize canvas object
- (resize-canvas)
-; Remove all listen events
- (events/removeAll js/document)
-; Register event listener `on-keydown` event
- (events/listen js/document goog.events.EventType.KEYDOWN on-keydown)
-; Start the game loop
- (game-loop)) )
-
 
 
 (defn init []
@@ -225,6 +224,9 @@
   ;; this is called in the index.html and must be exported
   ;; so it is available even in :advanced release builds
  ;(js/console.log "init")
+
+
+
  ;; Resize canvas object
  (resize-canvas)
   ;; Remove all listen events
@@ -236,9 +238,9 @@
 
 (defn app
   []
-  (let [{:keys [:snake/speed]}  @state]
+  (let [{:keys [:snake/speed :div/value] }  @state]
    [:div
-    [:div "Game Speed: " speed]]))
+    #_[:div "Game Score: " value]]))
 
 (defn ^:export main
   []
