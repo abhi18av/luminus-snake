@@ -22,9 +22,11 @@
          :snake/border 2                  ; border size
          :snake/body-color "lime"         ; snake's body color
          :snake/alive true                ; when `false`, stop game loop
+         :snake/speed 150                 ; the initial speed of the snake
          ;; snake food
          :snake/food nil                  ; when `nil`, regenerate it
          :snake/food-color "red"          ; the color of food
+         :snake/food-count nil            ; the number of food items snake already ate
          }))
 
 
@@ -64,14 +66,11 @@
                 (- height border))))
 
 
-;; call in browser console
 ;; snake.core.draw([2,1], "green")
 (t/deftest draw-test
-
-; (t/is
-;  (= [32 24 30 22]
-;   (draw [1 1] "green")))
-
+ (t/is
+  (= [32 24 30 22]
+   (draw [1 1] "green")))
  (t/is
   (= "green"
     (.-fillStyle (:canvas/ctx @state)))))
@@ -86,7 +85,6 @@
     (.setAttribute element "width"  width)
     (.setAttribute element "height" height)))
 
-;; call in browser console
 ;; snake.core.resize_canvas()
 (t/deftest resize-canvas-test
  (t/is
@@ -166,7 +164,7 @@
 (defn game-loop
   "The main game-loop."
   []
-  (let [{:keys [:canvas/background-color :snake/body :snake/body-color :snake/direction]}  @state
+  (let [{:keys [:canvas/background-color :snake/body :snake/body-color :snake/direction :snake/speed]}  @state
         head (add-coordinates (nth body 0) direction)
         tail (last body)]
 
@@ -176,11 +174,13 @@
     ;; Detect if snake collided with it's own body
     (when (self-collission? head)
       (js/alert (str "Snake is collission with itself at : " head))
+      ;(js/console.log (str "Snake is collission with itself at : " head))
       (swap! state assoc-in [:snake/alive] false))
 
     ;; Detect if snake exceeded the boundary
     (when (out-of-boundary? head)
       (js/alert (str "Snake is out of boundary at :" head))
+      ;(js/console.log (str "Snake is out of boundary at :" head))
       (swap! state assoc-in [:snake/alive] false))
 
     ;; When snake is alive, draw the snake and switch next game-loop
@@ -200,19 +200,31 @@
           (swap! state assoc-in [:snake/body] (-> (conj body head) drop-last))))
 
       ;; next move, you can modify the `150` to change different speed
-      (js/window.setTimeout (fn [] (game-loop)) 150))))
-
+      (js/window.setTimeout (fn [] (game-loop)) speed))))
 
 ;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;
 
-;; start is called by init after code reloading finishes
+(comment
+(defn app
+  []
+;; Resize canvas object
+ (resize-canvas)
+; Remove all listen events
+ (events/removeAll js/document)
+; Register event listener `on-keydown` event
+ (events/listen js/document goog.events.EventType.KEYDOWN on-keydown)
+; Start the game loop
+ (game-loop)) )
+
+
 
 (defn init []
   ;; init is called ONCE when the page loads
   ;; this is called in the index.html and must be exported
   ;; so it is available even in :advanced release builds
+ ;(js/console.log "init")
  ;; Resize canvas object
  (resize-canvas)
   ;; Remove all listen events
@@ -222,21 +234,21 @@
   ;; Start the game loop
  (game-loop))
 
-;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;
-
 (defn app
   []
-  init)
+  [:div
+        [
+         :canvas/element  (dom/getElement "canvas")
+         :canvas/ctx      (-> (dom/getElement "canvas") (.getContext "2d"))
+         :canvas/background-color "white" ; default canvas color (background)
+         :canvas/width  640
+         :canvas/height 480 ]])
 
 (defn ^:export main
   []
   (r/render
     [app]
     (.getElementById js/document "app")))
-
-
 
 ;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;
@@ -246,4 +258,4 @@
 ;; NOTE run all tests on browser
 
 
-(t/run-tests)
+;(t/run-tests)
