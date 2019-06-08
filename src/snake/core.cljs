@@ -237,10 +237,7 @@
  (game-loop))
 
 (defn app
-  []
-  (let [{:keys [:snake/speed :div/value] }  @state]
-   [:div
-    #_[:div "Game Score: " value]]))
+  [] )
 
 (defn ^:export main
   []
