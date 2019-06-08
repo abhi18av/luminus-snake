@@ -1,0 +1,1 @@
+{:optimizations :simple, :output-to "./out/snake.js", :asset-path "out", :output-dir "out"}
