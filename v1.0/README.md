@@ -50,7 +50,7 @@ And `nodejs main.js` becomes `lumo main.cljs`
 
 
 
-Some relecant links regarding `ClojureScript` I've used 
+Some relevant links regarding `ClojureScript` I've used 
 
 - https://www.verypossible.com/blog/clojurescript-and-javascript-interoperability-a-comprehensive-guide
 - https://cljs.info/cheatsheet/

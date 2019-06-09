@@ -1,21 +1,21 @@
-(ns snake
-
-;;;;;;;;;;;;;;;;;;;
-;; snake
-;;;;;;;;;;;;;;;;;;;
-
+;; We rely on the CLJS in-built google closure library to
+;; generate cross browser subset of javascript with dead-code-elimination
+(ns snake.core
   (:require [goog.dom :as dom]
+            [goog.events.EventType]
             [goog.events :as events]
             [goog.events.KeyCodes]
-            [goog.events.EventType]))
+            [clojure.test :as t]))
+
+
+
 
 ;; ------------------------------
-;; States
-
+;; The global mutable State
 (def state
   (atom {;; canvas object
          :canvas/element  (dom/getElement "canvas")
-         :canvas/ctx  (-> (dom/getElement "canvas") (.getContext "2d"))
+         :canvas/ctx      (-> (dom/getElement "canvas") (.getContext "2d"))
          :canvas/background-color "white" ; default canvas color (background)
          :canvas/width  640
          :canvas/height 480
@@ -26,19 +26,34 @@
          :snake/height 24                 ; 480 / 20
          :snake/border 2                  ; border size
          :snake/body-color "lime"         ; snake's body color
+         :snake/alive true                ; when `false`, stop game loop
+         ;; snake food
          :snake/food nil                  ; when `nil`, regenerate it
          :snake/food-color "red"          ; the color of food
-         :snake/alive true                ; when `false`, stop game loop
+
          }))
+
+
 
 ;; ------------------------------
 ;; Helper functions
 
-(defn axis-add [[x1 y1] [x2 y2]]
+
+(defn add-coordinates [[x1 y1] [x2 y2]]
   [(+ x1 x2) (+ y1 y2)])
 
-(defn axis-equal? [[x1 y1] [x2 y2]]
+(t/deftest add-coordinates-test
+  (t/is
+    (= [4 6] (add-coordinates [1 2] [3 4]) )))
+
+
+(defn coordinates-equal? [[x1 y1] [x2 y2]]
   (and (= x1 x2) (= y1 y2)))
+
+(t/deftest coordinates-equal?-test
+  (t/is
+   (= false (coordinates-equal? [1 2] [3 4]) )))
+
 
 ;; -----------------------------
 ;; Canvas functions
@@ -46,13 +61,29 @@
 (defn draw
   "Draw the point on canvas according to snake's width/height."
   [[x y] color]
-  (let [{:keys [:canvas/ctx :snake/width :snake/height :snake/border]} @state]
-    (aset ctx "fillStyle" color) ;; (set! (.-fillStyle ctx) color)
+  (let [{:keys [:canvas/ctx :snake/width :snake/height :snake/border]} (deref state )]
+    (set! (.-fillStyle ctx) color)
     (.fillRect  ctx
                 (* x width)
                 (* y height)
                 (- width border)
                 (- height border))))
+
+
+;; call in browser console
+;; snake.core.draw([2,1], "green")
+(t/deftest draw-test
+
+; (t/is
+;  (= [32 24 30 22]
+;   (draw [1 1] "green")))
+
+ (t/is
+  (= "green"
+    (.-fillStyle (:canvas/ctx @state)))))
+
+
+
 
 (defn resize-canvas
   "Resize the canvas according to state."
@@ -61,22 +92,35 @@
     (.setAttribute element "width"  width)
     (.setAttribute element "height" height)))
 
+;; call in browser console
+;; snake.core.resize_canvas()
+(t/deftest resize-canvas-test
+ (t/is
+  (= 640 (.-width (dom/getElement "canvas")))))
+
+
+
 ;; ------------------------------
-;; Game's functions
+;; Game functions
 
 (defn keycode->direction
   "Convert javascript's keycode to direction array."
   [keycode]
   (get {goog.events.KeyCodes.UP    [0 -1]  ; code: 38
         goog.events.KeyCodes.DOWN  [0  1]  ; code: 40
-        goog.events.KeyCodes.LEFT  [-1  0]  ; code: 37
-        goog.events.KeyCodes.RIGHT [1  0]} ; code: 39
+        goog.events.KeyCodes.LEFT  [-1 0] ; code: 37
+        goog.events.KeyCodes.RIGHT [1 0]} ; code: 39
        keycode nil))
+
+(t/deftest keycode->direction-test
+  (t/is
+    (= [1 0] (keycode->direction 39))))
+
 
 (defn opposite-direction?
   "Detect two direction array are opposite direction or not."
   [dir1 dir2]
-  (= [0 0] (axis-add dir1 dir2)))
+  (= [0 0] (add-coordinates dir1 dir2)))
 
 (defn on-keydown
   "The keydown event handler."
@@ -97,16 +141,16 @@
     (or (>= y max-y) (< y 0) (>= x max-x) (< x 0))))
 
 (defn self-collission?
-  "Check if axis is collission with snake's body."
+  "Check if axis is collision with snake's body."
   [[x y]]
   (let [{:keys [:snake/body]} @state]
-    (some #(axis-equal? [x y] %) body)))
+    (some #(coordinates-equal? [x y] %) body)))
 
 (defn eat-food?
   "Check if axis is equal the food's axis."
   [[x y]]
   (let [{:keys [:snake/food]} @state]
-    (axis-equal? [x y] food)))
+    (coordinates-equal? [x y] food)))
 
 (defn generate-food
   "Generate the food on a random coordinate."
@@ -129,10 +173,10 @@
   "The main game-loop."
   []
   (let [{:keys [:canvas/background-color :snake/body :snake/body-color :snake/direction]}  @state
-        head (axis-add (nth body 0) direction)
+        head (add-coordinates (nth body 0) direction)
         tail (last body)]
 
-    ;; Every time enter game-loop, check if we need to generate new food or not
+    ;; Every time we enter the game-loop, check if we need to generate new food or not
     (generate-food)
 
     ;; Detect if snake collided with it's own body
@@ -148,7 +192,7 @@
     ;; When snake is alive, draw the snake and switch next game-loop
     (when (:snake/alive @state)
       ;; Draw head
-      (draw head body-color)
+      (draw  head body-color)
       ;; Detect if food eat by snake or not
       (if (eat-food? head)
         ;; When food was eaten by snake, just increase it's head and not remove tail
@@ -157,7 +201,7 @@
                :snake/body (conj body head))
         (do
           ;; Remove tail by draw canvas's background-color
-          (draw tail background-color)
+          (draw  tail background-color)
           ;; Add head and remove tail
           (swap! state assoc-in [:snake/body] (-> (conj body head) drop-last))))
 
@@ -184,3 +228,12 @@
  (events/listen js/document goog.events.EventType.KEYDOWN on-keydown)
   ;; Start the game loop
  (game-loop))
+
+;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+
+;; NOTE run all tests on browser
+
+
+(t/run-tests)
