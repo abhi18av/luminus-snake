@@ -2,6 +2,11 @@
 
 This repo is home to a `snake` ( no - not a big one like an `anaconda` - a small one like in `Nokia-3310` ).
 
+
+- v1.0.https://www.abhi18av.com/luminus-snake/v1.0/snake.html
+- v2.0.0 https://www.abhi18av.com/luminus-snake/public/index.html
+
+
 Tools I've used
 
 - iTerm
@@ -11,7 +16,8 @@ Tools I've used
 - neovim
 - lumo-cljs
 - firefox-developer-edition
-
+- Brave browser
+- Atom
 
 
 I wanted to create a very simple snake game using `nodejs` - only in `ClojureScript`. I chose [`lumo-cljs`](https://github.com/anmonteiro/lumo)  which embeds a `nodejs` runtime with `clojurescript`.
