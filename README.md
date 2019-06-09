@@ -6,16 +6,15 @@ You can play the latest [v2.0.0](https://www.abhi18av.com/luminus-snake/public/i
 
 You can play the pure `lumo` based version here [v1.0.0](https://www.abhi18av.com/luminus-snake/v1.0/snake.html) and you can read more about it in the [`ReadMe`](https://github.com/abhi18av/luminus-snake/tree/master/v1.0)
 
+In the v2.0.0, I've relied on the more sophisticated `ClojureScript` tooling by using `shadow-cljs`(which takes care of installing npm packages, bundling builds etc) as well as `Reagent`(which is the ClojureScript wrapper to `ReactJS`).
 
-
-Tools I've used
+Tools I've used for v2.0.0
 
 - iTerm
 - Fish shell
 - git-flow-avh
 - gitkraken
 - neovim
-- lumo-cljs
 - firefox-developer-edition
 - Brave browser
 - Atom
