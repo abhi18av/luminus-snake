@@ -219,13 +219,11 @@
 ;;;;;;;;;;;;;;;
 
 
-(defn init []
+(defn  ^:export  init []
   ;; init is called ONCE when the page loads
   ;; this is called in the index.html and must be exported
   ;; so it is available even in :advanced release builds
- ;(js/console.log "init")
-
-
+  ;(js/console.log "init")
 
  ;; Resize canvas object
  (resize-canvas)
