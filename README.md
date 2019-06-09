@@ -8,10 +8,20 @@ You can play the pure `lumo` based version here [v1.0.0](https://www.abhi18av.co
 
 There are also video walkthroughs which I've created on YouTube for the v1.0.0 as there are a lot of things which `lumo` packs in and I'd love to share more about it.
 
+Video-1 
+http://www.youtube.com/watch?v=tv9iTBaoaHA
+
 [![001 IntroToLumo](http://img.youtube.com/vi/tv9iTBaoaHA/0.jpg)](http://www.youtube.com/watch?v=tv9iTBaoaHA "001 IntroToLumo")
+
+
+Video-2 
+http://www.youtube.com/watch?v=_YoiPlCndek
 
 [![002 IntroToLumo](http://img.youtube.com/vi/_YoiPlCndek/0.jpg)](http://www.youtube.com/watch?v=_YoiPlCndek "002 IntroToLumo")
 
+
+Video-3 
+http://www.youtube.com/watch?v=vrdWAEoRdUk
 
 [![003 IntroToLumo](http://img.youtube.com/vi/vrdWAEoRdUk/0.jpg)](http://www.youtube.com/watch?v=vrdWAEoRdUk "003 IntroToLumo")
 
